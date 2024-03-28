@@ -238,7 +238,7 @@ class CachingFileManager(FileManager):
         with self._optional_lock(needs_lock):
             default = None
             file = self._cache.pop(self._key, default)
-            logger.error(f"[ GARBAGE COLLECTED FILE ]: {self._key} {file} {file.__dict__}")
+            logger.error(f"[ GARBAGE COLLECTED FILE ]: {self._args} {self._key} {file} {file.__dict__}")
             if file is not None:
                 file.close()
 
