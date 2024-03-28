@@ -9,7 +9,7 @@ import warnings
 from collections.abc import Hashable
 from typing import Any
 import gc
-gc.disabled()
+gc.disable()
 
 from xarray.backends.locks import acquire
 from xarray.backends.lru_cache import LRUCache
