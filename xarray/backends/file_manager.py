@@ -8,6 +8,8 @@ import uuid
 import warnings
 from collections.abc import Hashable
 from typing import Any
+import gc
+gc.disabled()
 
 from xarray.backends.locks import acquire
 from xarray.backends.lru_cache import LRUCache
