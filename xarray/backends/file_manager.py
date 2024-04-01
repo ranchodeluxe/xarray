@@ -8,11 +8,21 @@ import uuid
 import warnings
 from collections.abc import Hashable
 from typing import Any
+import gc
+gc.disable()
 
 from xarray.backends.locks import acquire
 from xarray.backends.lru_cache import LRUCache
 from xarray.core import utils
 from xarray.core.options import OPTIONS
+
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+handler = logging.StreamHandler()
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - [ThreadID: %(thread)d] [ProcessID: %(process)d] - %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 # Global cache for storing open files.
 FILE_CACHE: LRUCache[Any, io.IOBase] = LRUCache(
@@ -230,6 +240,7 @@ class CachingFileManager(FileManager):
         with self._optional_lock(needs_lock):
             default = None
             file = self._cache.pop(self._key, default)
+            logger.error(f"[ GARBAGE COLLECTED FILE ]: {self._args} {self._key} {file} {file.__dict__}")
             if file is not None:
                 file.close()
 

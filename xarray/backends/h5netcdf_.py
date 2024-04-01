@@ -43,12 +43,22 @@ if TYPE_CHECKING:
     from xarray.core.datatree import DataTree
 
 
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+handler = logging.StreamHandler()
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - [ThreadID: %(thread)d] [ProcessID: %(process)d] - %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+
+
 class H5NetCDFArrayWrapper(BaseNetCDF4Array):
     def get_array(self, needs_lock=True):
         ds = self.datastore._acquire(needs_lock)
         return ds.variables[self.variable_name]
 
     def __getitem__(self, key):
+        logger.warning(f"[ GET ITEM ON ]: {self.datastore} {self.variable_name} {self.datastore._manager._args}")
         return indexing.explicit_indexing_adapter(
             key, self.shape, indexing.IndexingSupport.OUTER_1VECTOR, self._getitem
         )
